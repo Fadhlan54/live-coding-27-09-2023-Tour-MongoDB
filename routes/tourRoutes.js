@@ -1,5 +1,5 @@
 const express = require("express")
-const tourController = require('../controllers/toursController')
+const tourController = require("../controllers/toursController")
 
 const router = express.Router()
 
@@ -12,12 +12,12 @@ router
   .post(
     // tourController.checkBody,
     tourController.createTourModel
-    )
+  )
 
 router
   .route("/:id")
   .get(tourController.getTourByIdModel)
-  .patch(tourController.editTour)
-  .delete(tourController.removeTour)
+  .patch(tourController.editTourModels)
+  .delete(tourController.removeTourModel)
 
 module.exports = router

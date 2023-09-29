@@ -1,6 +1,6 @@
 const fs = require("fs")
 const morgan = require("morgan")
-const Tour = require('../models/tours-models')
+const Tour = require("../models/tours-models")
 
 const tours = JSON.parse(
   fs.readFileSync(
@@ -59,20 +59,20 @@ const createTour = (req, res) => {
 
 const createTourModel = async (req, res) => {
   try {
-    const newTour = await Tour.create(req.body); // Membuat tour baru dengan data dari req.body
+    const newTour = await Tour.create(req.body) // Membuat tour baru dengan data dari req.body
     res.status(201).json({
       status: "success",
       data: {
         tour: newTour,
       },
-    });
+    })
   } catch (err) {
     res.status(400).json({
       status: "fail",
       message: err.message, // Menampilkan pesan kesalahan jika terjadi kesalahan
-    });
+    })
   }
-};
+}
 
 const getAllTours = (req, res) => {
   res.status(200).json({
@@ -98,7 +98,7 @@ const getAllToursModels = async (req, res) => {
     res.status(400).json({
       status: "fail",
       message: err.message, // Menampilkan pesan kesalahan jika terjadi kesalahan
-    });
+    })
   }
 }
 
@@ -114,9 +114,11 @@ const getTourById = (req, res) => {
   })
 }
 
-const getTourByIdModel = async(req, res) => {
+const getTourByIdModel = async (req, res) => {
   try {
-    const tour = await Tour.findById(req.params.id)
+    const tour = await Tour.findById(
+      req.params.id
+    )
     res.status(200).json({
       status: "success",
       data: {
@@ -127,7 +129,7 @@ const getTourByIdModel = async(req, res) => {
     res.status(400).json({
       status: "fail",
       message: err.message, // Menampilkan pesan kesalahan jika terjadi kesalahan
-    });
+    })
   }
 }
 
@@ -167,7 +169,6 @@ const removeTour = (req, res) => {
     (el) => el.id === id
   )
 
-
   // proses mengahpus data sesuai index array nya => req.params.id
   tours.splice(tourIndex, 1)
 
@@ -185,6 +186,58 @@ const removeTour = (req, res) => {
   )
 }
 
+const editTourModels = async (req, res) => {
+  try {
+    const id = req.params.id
+    const updateTour =
+      await Tour.findByIdAndUpdate(id, req.body, {
+        new: true,
+      })
+    if (!updateTour) {
+      res.status(400).json({
+        status: "failed",
+        message: "id not found",
+      })
+    }
+    res.status(201).json({
+      status: "success",
+      data: {
+        tour: updateTour,
+      },
+    })
+  } catch (e) {
+    res.status(500).json({
+      status: "success",
+      message: e.message,
+    })
+  }
+}
+
+const removeTourModel = async (req, res) => {
+  try {
+    const id = req.params.id
+    const delTour = await Tour.findByIdAndDelete(
+      id
+    )
+    if (!delTour) {
+      res.status(400).json({
+        status: "failed",
+        message: "id not found",
+      })
+    }
+    res.status(201).json({
+      status: "success",
+      message: `Success delete id: ${id}`,
+      data: null,
+    })
+  } catch (e) {
+    res.status(500).json({
+      status: "success",
+      message: e.message,
+    })
+  }
+}
+
 module.exports = {
   createTour,
   editTour,
@@ -195,5 +248,7 @@ module.exports = {
   removeTour,
   checkId,
   checkBody,
-  createTourModel
+  createTourModel,
+  editTourModels,
+  removeTourModel,
 }
